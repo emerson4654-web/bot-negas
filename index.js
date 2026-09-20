@@ -13,18 +13,25 @@ const client = new Client({
 const VOICE_CHANNEL_ID = "1548062908557172786";
 
 client.once("ready", () => {
-    console.log(`✅ Bot online como ${client.user.tag}`);
+    console.log("Bot online como " + client.user.tag);
 });
 
 client.on("messageCreate", async (message) => {
     if (message.author.bot) return;
+
     if (message.content.toLowerCase() !== "!negas") return;
 
     try {
         const channel = await client.channels.fetch(VOICE_CHANNEL_ID);
 
-        if (!channel || !channel.isVoiceBased()) {
-            return message.reply("❌ Canal de voz não encontrado.");
+        if (!channel) {
+            await message.reply("❌ Não encontrei essa call.");
+            return;
+        }
+
+        if (!channel.isVoiceBased()) {
+            await message.reply("❌ Esse ID não é um canal de voz.");
+            return;
         }
 
         joinVoiceChannel({
@@ -35,10 +42,10 @@ client.on("messageCreate", async (message) => {
             selfMute: false
         });
 
-        message.reply("✅ Entrei na call!");
+        await message.reply("✅ Entrei na call!");
     } catch (error) {
         console.error(error);
-        message.reply("❌ Não consegui entrar na call.");
+        await message.reply("❌ Não consegui entrar na call.");
     }
 });
 
